@@ -35,3 +35,27 @@
 build
 cmake-build*
 .idea
+bin
+
+# Binaries for programs and plugins
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Executable files
+photon
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+*~
+
+# Test binary
+*.test
+
+# Dependency directories
+vendor/
