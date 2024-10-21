@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
-	"photon/src/tokenizer"
+	"photon/src/lexer"
 )
 
 func main() {
@@ -19,7 +19,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	tokens, err := tokenizer.Tokenize(&fileContent)
+	tokens, err := lexer.Tokenize(fileContent)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
