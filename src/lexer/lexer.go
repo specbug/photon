@@ -4,10 +4,21 @@ import "photon/src/token"
 
 type FileByte byte
 
+var delimiters = []byte{';', ' ', '\n', '\t'}
+var phonyTokens = []token.TType{token.T_SPACE, token.T_NEWLINE, token.T_EOF}
+
 func (b *FileByte) isDelimiter() bool {
-	delimits := []byte{';', ' ', '\n', '\t'}
-	for _, d := range delimits {
+	for _, d := range delimiters {
 		if byte(*b) == d {
+			return true
+		}
+	}
+	return false
+}
+
+func isPhonyToken(t *token.TType) bool {
+	for _, pt := range phonyTokens {
+		if *t == pt {
 			return true
 		}
 	}
@@ -37,7 +48,7 @@ func Tokenize(fileContent []byte) ([]token.Token, error) {
 				return nil, &token.TokenizeError{Message: "Invalid delimiter: " + delimiter}
 			}
 
-			if tokenKey != token.T_SPACE {
+			if !isPhonyToken(&tokenKey) {
 				tokenObj := token.Token{}
 				tokenObj.New(tokenKey, delimiter)
 				tokens = append(tokens, tokenObj)
@@ -64,7 +75,7 @@ func Tokenize(fileContent []byte) ([]token.Token, error) {
 				return nil, &token.TokenizeError{Message: "Invalid token: " + word}
 			}
 
-			if tokenKey != token.T_SPACE {
+			if !isPhonyToken(&tokenKey) {
 				tokenObj := token.Token{}
 				tokenObj.New(tokenKey, word)
 				tokens = append(tokens, tokenObj)
