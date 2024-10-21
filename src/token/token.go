@@ -88,6 +88,7 @@ const (
 	T_EOF          = "EOF"     // End of file
 	T_ZERO_MEASURE = ""        // empty string
 	T_SPACE        = "SPACE"   // Space
+	T_IDENT        = "IDENT"   // Identifier (variable name, function name, etc.)
 )
 
 type TType string
@@ -178,7 +179,7 @@ func (t *Token) String() string {
 func (t *Token) New(tType TType, literal string) {
 	t.Type = tType
 	switch tType {
-	case LIT_INT, LIT_FLOAT, LIT_STRING, LIT_CHAR, LIT_BOOL:
+	case LIT_INT, LIT_FLOAT, LIT_STRING, LIT_CHAR, LIT_BOOL, T_IDENT:
 		t.Literal = literal
 	default:
 		t.Literal = ""

@@ -6,6 +6,7 @@ type FileByte byte
 
 var delimiters = []byte{';', ' ', '\n', '\t'}
 var phonyTokens = []token.TType{token.T_SPACE, token.T_NEWLINE, token.T_EOF}
+var variableAntecedentTokens = []token.TType{token.KW_LET, token.KW_CONST, token.KW_FUNC, token.KW_RETURN}
 
 func (b *FileByte) isDelimiter() bool {
 	for _, d := range delimiters {
@@ -25,8 +26,42 @@ func isPhonyToken(t *token.TType) bool {
 	return false
 }
 
+func isVariableAntecedentToken(t *token.TType) bool {
+	for _, vat := range variableAntecedentTokens {
+		if *t == vat {
+			return true
+		}
+	}
+	return false
+}
+
+func getToken(word string, prevToken *token.Token) (*token.Token, error) {
+
+	if prevToken != nil && isVariableAntecedentToken(&prevToken.Type) {
+		tokenObj := token.Token{}
+		tokenObj.New(token.T_IDENT, word)
+		return &tokenObj, nil
+	}
+
+	tokenKey := token.Lookup(word)
+
+	if tokenKey == token.T_ZERO_MEASURE {
+		return nil, &token.TokenizeError{Message: "Invalid token: " + word}
+	}
+
+	if !isPhonyToken(&tokenKey) {
+		tokenObj := token.Token{}
+		tokenObj.New(tokenKey, word)
+		return &tokenObj, nil
+	}
+
+	return nil, nil
+
+}
+
 func Tokenize(fileContent []byte) ([]token.Token, error) {
 	var tokens []token.Token
+	var prevToken *token.Token = nil
 	end := 0
 
 	for start := 0; start < len(fileContent); {
@@ -42,18 +77,14 @@ func Tokenize(fileContent []byte) ([]token.Token, error) {
 		fb := (*FileByte)(&fileContent[start])
 		if fb.isDelimiter() {
 			delimiter := string(fileContent[start])
-			tokenKey := token.Lookup(delimiter)
-
-			if tokenKey == token.T_ZERO_MEASURE {
-				return nil, &token.TokenizeError{Message: "Invalid delimiter: " + delimiter}
+			tokenObj, err := getToken(delimiter, prevToken)
+			if err != nil {
+				return nil, err
 			}
-
-			if !isPhonyToken(&tokenKey) {
-				tokenObj := token.Token{}
-				tokenObj.New(tokenKey, delimiter)
-				tokens = append(tokens, tokenObj)
+			if tokenObj != nil {
+				tokens = append(tokens, *tokenObj)
 			}
-
+			prevToken = tokenObj
 			start++
 			end = start
 			continue
@@ -69,18 +100,14 @@ func Tokenize(fileContent []byte) ([]token.Token, error) {
 
 		if start < end {
 			word := string(fileContent[start:end])
-			tokenKey := token.Lookup(word)
-
-			if tokenKey == token.T_ZERO_MEASURE {
-				return nil, &token.TokenizeError{Message: "Invalid token: " + word}
+			tokenObj, err := getToken(word, prevToken)
+			if err != nil {
+				return nil, err
 			}
-
-			if !isPhonyToken(&tokenKey) {
-				tokenObj := token.Token{}
-				tokenObj.New(tokenKey, word)
-				tokens = append(tokens, tokenObj)
+			if tokenObj != nil {
+				tokens = append(tokens, *tokenObj)
 			}
-
+			prevToken = tokenObj
 			start = end
 		}
 	}

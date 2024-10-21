@@ -1,5 +1,6 @@
-func ( ) {
-    return 0;
+func main() {
+    let x = 5;
+    return x;
 }
 
 exit 32;
