@@ -4,18 +4,8 @@ import "photon/src/token"
 
 type FileByte byte
 
-var delimiters = []byte{';', ' ', '\n', '\t'}
 var phonyTokens = []token.TType{token.T_SPACE, token.T_NEWLINE, token.T_EOF}
-var variableAntecedentTokens = []token.TType{token.KW_LET, token.KW_CONST, token.KW_FUNC, token.KW_RETURN}
-
-func (b *FileByte) isDelimiter() bool {
-	for _, d := range delimiters {
-		if byte(*b) == d {
-			return true
-		}
-	}
-	return false
-}
+var variableAntecedentTokens = []token.TType{token.KW_LET, token.KW_CONST, token.KW_FUNC, token.KW_RETURN, token.SYM_LPAREN, token.SYM_ASSIGN, token.SYM_COMMA}
 
 func isPhonyToken(t *token.TType) bool {
 	for _, pt := range phonyTokens {
@@ -75,9 +65,10 @@ func Tokenize(fileContent []byte) ([]token.Token, error) {
 		}
 
 		fb := (*FileByte)(&fileContent[start])
-		if fb.isDelimiter() {
-			delimiter := string(fileContent[start])
-			tokenObj, err := getToken(delimiter, prevToken)
+		word := string(*fb)
+		charTokenType := token.LookupMap[word]
+		if charTokenType != token.T_ZERO_MEASURE {
+			tokenObj, err := getToken(word, prevToken)
 			if err != nil {
 				return nil, err
 			}
@@ -92,14 +83,15 @@ func Tokenize(fileContent []byte) ([]token.Token, error) {
 
 		for end < len(fileContent) {
 			fb = (*FileByte)(&fileContent[end])
-			if fb.isDelimiter() {
+			charTokenType = token.LookupMap[string(*fb)]
+			if charTokenType != token.T_ZERO_MEASURE {
 				break
 			}
 			end++
 		}
 
 		if start < end {
-			word := string(fileContent[start:end])
+			word = string(fileContent[start:end])
 			tokenObj, err := getToken(word, prevToken)
 			if err != nil {
 				return nil, err

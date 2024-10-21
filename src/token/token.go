@@ -82,6 +82,13 @@ const (
 	LIT_CHAR   = "CHAR_LTRL"   // Character literal
 	LIT_BOOL   = "BOOL_LTRL"   // Boolean literal (true/false)
 
+	// Types
+	TYPE_INT    = "INT"    // Integer
+	TYPE_FLOAT  = "FLOAT"  // Float
+	TYPE_STRING = "STRING" // String
+	TYPE_CHAR   = "CHAR"   // Character
+	TYPE_BOOL   = "BOOL"   // Boolean
+
 	// Miscellaneous: Comments, newlines, and end of file
 	T_COMMENT      = "COMMENT" // Comment
 	T_NEWLINE      = "NEWLINE" // Newline
@@ -167,6 +174,33 @@ var miscMap = map[string]TType{
 	" ":   T_SPACE,
 }
 
+// Type map
+var typeMap = map[string]TType{
+	"int":    TYPE_INT,
+	"float":  TYPE_FLOAT,
+	"string": TYPE_STRING,
+	"char":   TYPE_CHAR,
+	"bool":   TYPE_BOOL,
+}
+
+// global map
+var LookupMap = map[string]TType{}
+
+func init() {
+	for k, v := range kwMap {
+		LookupMap[k] = v
+	}
+	for k, v := range symMap {
+		LookupMap[k] = v
+	}
+	for k, v := range typeMap {
+		LookupMap[k] = v
+	}
+	for k, v := range miscMap {
+		LookupMap[k] = v
+	}
+}
+
 func (t *Token) String() string {
 	switch t.Literal {
 	case "":
@@ -197,16 +231,10 @@ func litLookup(s string) (TType, bool) {
 }
 
 func Lookup(s string) TType {
-	if t, ok := kwMap[s]; ok {
-		return t
-	}
-	if t, ok := symMap[s]; ok {
+	if t, ok := LookupMap[s]; ok {
 		return t
 	}
 	if t, ok := litLookup(s); ok {
-		return t
-	}
-	if t, ok := miscMap[s]; ok {
 		return t
 	}
 	return T_ZERO_MEASURE
