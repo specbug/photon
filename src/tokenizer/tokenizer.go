@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-type TokenKey int32
+type TokenKey string
 type FileByte byte
 type TokenType struct {
 	Key   TokenKey
@@ -13,22 +13,18 @@ type TokenType struct {
 }
 
 const (
-	_PEXIT TokenKey = iota
-	_PSEMI
-	_PINT_LTRL
-	_PSPACE
+	P_EXIT     = "EXIT"
+	P_SEMI     = "SEMI"
+	P_INT_LTRL = "INT_LTRL"
+	P_SPACE    = "SPACE"
 )
-
-func (tk *TokenKey) String() string {
-	return [...]string{"_PEXIT", "_PSEMI", "_PINT_LTRL", "_PSPACE"}[*tk]
-}
 
 func (tt *TokenType) String() string {
 	fmtString := ""
 	if tt.Value != nil {
-		fmtString = fmt.Sprintf("{Key: %s, Value: %v}", &tt.Key, tt.Value)
+		fmtString = fmt.Sprintf("{Key: %s, Value: %v}", tt.Key, tt.Value)
 	} else {
-		fmtString = fmt.Sprintf("{Key: %s}", &tt.Key)
+		fmtString = fmt.Sprintf("{Key: %s}", tt.Key)
 	}
 	return fmtString
 }
@@ -36,25 +32,25 @@ func (tt *TokenType) String() string {
 func mapStringToTokenKey(s *string) TokenKey {
 	switch *s {
 	case ";":
-		return _PSEMI
+		return P_SEMI
 	case "exit":
-		return _PEXIT
+		return P_EXIT
 	case " ":
-		return _PSPACE
+		return P_SPACE
 	default:
 		// TODO: Support Unicode characters
 		if _, err := strconv.Atoi(*s); err == nil {
-			return _PINT_LTRL
+			return P_INT_LTRL
 		}
 	}
-	return -1
+	return ""
 }
 
 func (tt *TokenType) new(key *TokenKey, value *string) {
 	tt.Key = *key
 
 	switch *key {
-	case _PINT_LTRL:
+	case P_INT_LTRL:
 		intValue, _ := strconv.Atoi(*value)
 		tt.Value = intValue
 	default:
@@ -94,10 +90,10 @@ func Tokenize(fileContent *[]byte) ([]TokenType, error) {
 		if fb.isDelimiter() {
 			word = string((*fileContent)[start : end+1])
 			tokenKey = mapStringToTokenKey(&word)
-			if tokenKey == -1 {
+			if tokenKey == "" {
 				return nil, &TokenizeError{Message: "Invalid token: " + word}
 			}
-			if tokenKey != _PSPACE {
+			if tokenKey != P_SPACE {
 				token = &TokenType{}
 				token.new(&tokenKey, &word)
 				tokens = append(tokens, *token)
@@ -114,9 +110,9 @@ func Tokenize(fileContent *[]byte) ([]TokenType, error) {
 	if start < int32(len(*fileContent)) {
 		word = string((*fileContent)[start:])
 		tokenKey = mapStringToTokenKey(&word)
-		if tokenKey == -1 {
+		if tokenKey == "" {
 			return nil, &TokenizeError{Message: "Invalid token: " + word}
-		} else if tokenKey == _PSPACE {
+		} else if tokenKey == P_SPACE {
 			return tokens, nil
 		}
 		token = &TokenType{}
