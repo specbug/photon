@@ -237,7 +237,7 @@ func Lookup(s string) TType {
 	if t, ok := litLookup(s); ok {
 		return t
 	}
-	return T_ZERO_MEASURE
+	return T_IDENT
 }
 
 func (te *TokenizeError) Error() string {

@@ -5,7 +5,6 @@ import "photon/src/token"
 type FileByte byte
 
 var phonyTokens = []token.TType{token.T_SPACE, token.T_NEWLINE, token.T_EOF}
-var variableAntecedentTokens = []token.TType{token.KW_LET, token.KW_CONST, token.KW_FUNC, token.KW_RETURN, token.SYM_LPAREN, token.SYM_ASSIGN, token.SYM_COMMA}
 
 func isPhonyToken(t *token.TType) bool {
 	for _, pt := range phonyTokens {
@@ -16,23 +15,7 @@ func isPhonyToken(t *token.TType) bool {
 	return false
 }
 
-func isVariableAntecedentToken(t *token.TType) bool {
-	for _, vat := range variableAntecedentTokens {
-		if *t == vat {
-			return true
-		}
-	}
-	return false
-}
-
-func getToken(word string, prevToken *token.Token) (*token.Token, error) {
-
-	if prevToken != nil && isVariableAntecedentToken(&prevToken.Type) {
-		tokenObj := token.Token{}
-		tokenObj.New(token.T_IDENT, word)
-		return &tokenObj, nil
-	}
-
+func getToken(word string) (*token.Token, error) {
 	tokenKey := token.Lookup(word)
 
 	if tokenKey == token.T_ZERO_MEASURE {
@@ -51,7 +34,6 @@ func getToken(word string, prevToken *token.Token) (*token.Token, error) {
 
 func Tokenize(fileContent []byte) ([]token.Token, error) {
 	var tokens []token.Token
-	var prevToken *token.Token = nil
 	end := 0
 
 	for start := 0; start < len(fileContent); {
@@ -68,14 +50,13 @@ func Tokenize(fileContent []byte) ([]token.Token, error) {
 		word := string(*fb)
 		charTokenType := token.LookupMap[word]
 		if charTokenType != token.T_ZERO_MEASURE {
-			tokenObj, err := getToken(word, prevToken)
+			tokenObj, err := getToken(word)
 			if err != nil {
 				return nil, err
 			}
 			if tokenObj != nil {
 				tokens = append(tokens, *tokenObj)
 			}
-			prevToken = tokenObj
 			start++
 			end = start
 			continue
@@ -92,14 +73,13 @@ func Tokenize(fileContent []byte) ([]token.Token, error) {
 
 		if start < end {
 			word = string(fileContent[start:end])
-			tokenObj, err := getToken(word, prevToken)
+			tokenObj, err := getToken(word)
 			if err != nil {
 				return nil, err
 			}
 			if tokenObj != nil {
 				tokens = append(tokens, *tokenObj)
 			}
-			prevToken = tokenObj
 			start = end
 		}
 	}
