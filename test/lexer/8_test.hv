@@ -1,0 +1,9 @@
+while counter < 10 {
+    counter = counter + 1
+    print(counter)
+}
+
+// Expected tokens:
+// {WHILE} {IDENT, "counter"} {LT} {INT_LTRL, "10"} {LBRACE}
+// {IDENT, "counter"} {ASSIGN} {IDENT, "counter"} {PLUS} {INT_LTRL, "1"}
+// {PRINT} {LPAREN} {IDENT, "counter"} {RPAREN} {RBRACE}

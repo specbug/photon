@@ -1,0 +1,6 @@
+let is_valid = true && false || true
+let result = a != b
+
+// Expected tokens:
+// {LET} {IDENT, "is_valid"} {ASSIGN} {BOOL_LTRL, "true"} {AND} {BOOL_LTRL, "false"} {OR} {BOOL_LTRL, "true"}
+// {LET} {IDENT, "result"} {ASSIGN} {IDENT, "a"} {NEQ} {IDENT, "b"}

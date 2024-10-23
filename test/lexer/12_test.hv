@@ -1,0 +1,4 @@
+let greeting = "hello, " + "world!"
+
+// Expected tokens:
+// {LET} {IDENT, "greeting"} {ASSIGN} {STRING_LTRL, "hello, "} {PLUS} {STRING_LTRL, "world!"}

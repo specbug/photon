@@ -1,0 +1,15 @@
+while true {
+    if a > b {
+        break
+    } else {
+        continue
+    }
+}
+
+// Expected tokens:
+// {WHILE} {BOOL_LTRL, "true"} {LBRACE}
+// {IF} {IDENT, "a"} {GT} {IDENT, "b"} {LBRACE}
+// {BREAK} {RBRACE}
+// {ELSE} {LBRACE}
+// {CONTINUE} {RBRACE}
+// {RBRACE}

@@ -1,0 +1,10 @@
+func add(a, b) {
+    let sum = a + b
+    return sum
+}
+
+
+// Expected tokens:
+// {FUNC} {IDENT, "add"} {LPAREN} {IDENT, "a"} {COMMA} {IDENT, "b"} {RPAREN} {LBRACE}
+// {LET} {IDENT, "sum"} {ASSIGN} {IDENT, "a"} {PLUS} {IDENT, "b"}
+// {RETURN} {IDENT, "sum"} {RBRACE}
