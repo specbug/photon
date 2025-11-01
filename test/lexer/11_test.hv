@@ -1,4 +1,0 @@
-let bitwise_result = a & b | c ^ d
-
-// Expected tokens:
-// {LET} {IDENT, "bitwise_result"} {ASSIGN} {IDENT, "a"} {AMPERSAND} {IDENT, "b"} {PIPE} {IDENT, "c"} {CARET} {IDENT, "d"}

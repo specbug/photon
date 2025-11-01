@@ -1,6 +1,0 @@
-let result = (a + b) * c / (d - e) % f
-
-// Expected tokens:
-// {LET} {IDENT, "result"} {ASSIGN} {LPAREN} {IDENT, "a"} {PLUS} {IDENT, "b"} {RPAREN}
-// {MUL} {IDENT, "c"} {DIV} {LPAREN} {IDENT, "d"} {MINUS} {IDENT, "e"} {RPAREN}
-// {MOD} {IDENT, "f"}

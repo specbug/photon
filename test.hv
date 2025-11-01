@@ -1,6 +1,0 @@
-func main(y:int = 2, z:int = 3){
-    let x = y+5;
-    return x;
-}
-
-exit 32;

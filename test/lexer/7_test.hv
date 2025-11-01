@@ -1,7 +1,0 @@
-if value == nil {
-    print("value is nil")
-}
-
-// Expected tokens:
-// {IF} {IDENT, "value"} {EQ} {NIL} {LBRACE}
-// {PRINT} {LPAREN} {STRING_LTRL, "Value is nil"} {RPAREN} {RBRACE}

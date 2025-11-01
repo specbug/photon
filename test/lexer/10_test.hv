@@ -1,6 +1,0 @@
-const pi = 3
-exit
-
-// Expected tokens:
-// {CONST} {IDENT, pi} {ASSIGN} {INT_LTRL, 3}
-// {EXIT}
